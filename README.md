@@ -15,7 +15,7 @@ npm install async gm fs mktemp
 ```trim.Handler``` 
 7. In the designer section, add trigger S3 bucket to your AWS lambda function 
 8. Now when ever you upload a file to bucket, you can see the new folder with converted images
-9. Following is an example test event,
+9. Following is an example test event, (update s3 bucket name, key, file size & file etag )
 
 ```
 {
