@@ -1,14 +1,14 @@
 1. Download trim.js
 2. Open terminal, Enter 
-```
-cd AWS-trim
+  ```
+  cd AWS-trim
 
-```
+  ```
 3. Now enter following code in terminal 
-```
-npm install async gm fs mktemp
+  ```
+  npm install async gm fs mktemp
 
-```
+  ```
 4. The AWS Lambda runtime already has the AWS SDK for JavaScript in Node.js, So we don't need to install AWS SDK
 5. Select `trim.js & node_modules` folder and create a zip file
 6. In AWS, create a lambda function and upload this zip in `Function code` section, Change the HandlerInfo name to 
