@@ -24,10 +24,27 @@ exports.handler = function(event, context, callback) {
   fileType = srcKey.slice(-3, srcKey.length);
   var promises = [];
   var folderName = 'upload/';
-  
-  console.log('FileType:::', fileType);
+  var resFileName = System.getenv('Result_File_Name');
+  var resultFileKey = folderName;
+  var instanceURL = System.getenv('Instance_URL');
+
   console.log('FileName:::', dstPrefix);
   
+  // check result file name
+  if (instanceURL == undefined || instanceURL == NULL || instanceURL == '') {
+    let errMsg = 'Please enter the instance url before do process';
+    callback(errMsg);
+    return;
+  }
+
+  // check instance url 
+  if (resFileName == undefined || resFileName == NULL || resFileName == '') {
+    let errMsg = 'Please enter the result file name before do process';
+    callback(errMsg);
+    return;
+  }
+
+  //  check file type
   if (!fileType || fileType != 'pdf') {
     var msg = "Invalid filetype found for key: " + srcKey;
     callback(msg);
@@ -39,6 +56,7 @@ exports.handler = function(event, context, callback) {
   function getAccessToken() {
 
     let clientId = System.getenv('Client_Identifier');
+
     let params = {
       FunctionName: 'apiGWandFunctionalToken_Lambda',
       InvocationType: 'RequestResponse',
@@ -74,7 +92,7 @@ exports.handler = function(event, context, callback) {
           method    : 'POST',
           json      : true,   
           body      : postData,
-          url       : 'https://lorealusa--CPDFix.cs70.my.salesforce.com/services/data/v42.0/sobjects/Attachment',
+          url       : instanceURL + '/services/data/v42.0/sobjects/Attachment',
           headers   : headers
       }
       request(options, function (err, res, body) {
@@ -167,7 +185,7 @@ exports.handler = function(event, context, callback) {
         jsonResult[fileName]  = errorMessage;
       });
 
-      uploadToBucket(bucket, folderName + 'result', JSON.stringify(jsonResult)).then(res=>{
+      uploadToBucket(bucket, resultFileKey, JSON.stringify(jsonResult)).then(res=>{
         resolve('Err Files Handeled successed');
       }, err=>{
         reject('Err ' + err);
@@ -188,7 +206,7 @@ exports.handler = function(event, context, callback) {
       let options = {
           method    : 'GET',
           json      : true,   
-          url       : 'https://lorealusa--CPDFix.cs70.my.salesforce.com/services/data/v42.0/query?q=' + query,
+          url       : instanceURL + '/services/data/v42.0/query?q=' + query,
           headers   : headers
       }
       
@@ -242,7 +260,7 @@ exports.handler = function(event, context, callback) {
       if (getFilesPropertyPromise.length > 0) {
 
         // get JSON Result file 
-        getFileFromBucket(bucket, folderName + 'result').then(jsonRes=>{
+        getFileFromBucket(bucket, resultFileKey).then(jsonRes=>{
           
           // convert file result(binary-value) to json
           let baseStr = Buffer.from(jsonRes.Body).toString('base64');
@@ -287,7 +305,7 @@ exports.handler = function(event, context, callback) {
                     });
                     
                     //upload result file to bucket.
-                    uploadToBucket(bucket, folderName + 'result', JSON.stringify(jsonResult)).then(res=>{
+                    uploadToBucket(bucket, resultFileKey, JSON.stringify(jsonResult)).then(res=>{
                       // next method will be called here
                       resolve('All Images uploaded to Salesforce successed');
                     });
