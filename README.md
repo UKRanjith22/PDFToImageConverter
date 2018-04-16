@@ -15,9 +15,10 @@ Convert pdf file to image
 6. Select `trim.js & node_modules` folder and create a zip file.
 7. In AWS, create a lambda function and upload this zip in `Function code` section, Change the HandlerInfo name to 
 ```trim.handler```.
-8. In the designer section, add trigger S3 bucket to your AWS lambda function.
-9. Now when ever you upload a file to bucket, you can see the new folder with converted images.
-10. Following is an example test event, (update s3 bucket name, key, file size & file etag )
+8. Entert the Environment values of ```Client_Identifier, Instance_URL & Result_File_Name```.
+9. In the designer section, add trigger S3 bucket to your AWS lambda function.
+10. Now when ever you upload a file to bucket, you can see the new folder with converted images.
+11. Following is an example test event, (update s3 bucket name, key, file size & file etag )
 ```
 {
   "Records": [
